@@ -20,7 +20,7 @@ class Generate:
 @register
 class PostfixGenerate(Generate):
     def generate(self):
-        basedir = os.path.join(self.rootdir, "postfix")
+        basedir = os.path.join(self.rootdir, "postfix", "etc", "postfix")
         filename = os.path.join(basedir, "domains")
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -32,7 +32,7 @@ class PostfixGenerate(Generate):
 @register
 class DovecotGenerate(Generate):
     def generate(self):
-        basedir = os.path.join(self.rootdir, "dovecot")
+        basedir = os.path.join(self.rootdir, "dovecot", "etc", "dovecot")
         filename = os.path.join(basedir, "passwd")
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -45,7 +45,7 @@ class DovecotGenerate(Generate):
 @register
 class WebserverGenerate(Generate):
     def generate(self):
-        basedir = os.path.join(self.rootdir, "webserver")
+        basedir = os.path.join(self.rootdir)
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
         templateEnv = jinja2.Environment(loader=templateLoader)
 
@@ -84,7 +84,7 @@ class WebserverGenerate(Generate):
                         loc['fastcgi_params'] = OrderedDict(sorted(loc['fastcgi_params'].items(), key=lambda t: t[0]))
 
             for platform in platforms:
-                filename = os.path.join(basedir, platform, 'conf.d',  item['id'] + ".conf")
+                filename = os.path.join(basedir, platform, "etc", platform, 'conf.d',  item['id'] + ".conf")
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, "w") as stream:
                     output = template[platform].render(variables)
@@ -101,7 +101,7 @@ class WebserverGenerate(Generate):
         for platform in platforms:
             for configfile in configs[platform]:
                 templ = templateEnv.get_template(os.path.join(platform, configfile))
-                filename = os.path.join(basedir, platform, configfile)
+                filename = os.path.join(basedir, platform, "etc", platform, configfile)
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, "w") as stream:
                     output = templ.render(variables)
@@ -112,7 +112,7 @@ class WebserverGenerate(Generate):
 @register
 class BindGenerate(Generate):
     def generate(self):
-        basedir = os.path.join(self.rootdir, "bind")
+        basedir = os.path.join(self.rootdir, "bind", "etc", "bind")
 
         os.makedirs(basedir, exist_ok=True)
         for name, domain in sorted(self.db["domains"].items()):
@@ -137,7 +137,7 @@ class BindGenerate(Generate):
 @register
 class KnotGenerate(Generate):
     def generate(self):
-        basedir = os.path.join(self.rootdir, "knot")
+        basedir = os.path.join(self.rootdir, "knot", "etc", "knot")
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
         templateEnv = jinja2.Environment(loader=templateLoader, lstrip_blocks=False, trim_blocks=False)
 
